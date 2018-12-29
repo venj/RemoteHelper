@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Remote Helper</string>
+    <string name="menu_settings">Settings</string>
+    <string name="save_button_title">Save</string>
+    <string name="port_edit_hint">Port</string>
+    <string name="address_edit_hint">Address</string>
+    <string name="username_edit_hint">Username</string>
+    <string name="password_edit_hint">Password</string>
+    <string name="please_enter_magnet_or_magnet_hash">Please enter magnet or magnet hash</string>
+    <string name="add_button_title">Add</string>
+    <string name="clearButtonText">Clear</string>
+</resources>
