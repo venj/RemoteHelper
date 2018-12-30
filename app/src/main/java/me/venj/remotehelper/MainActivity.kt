@@ -38,6 +38,8 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
     private lateinit var transmissionUsername: String
     private lateinit var transmissionPassword: String
 
+    private val magnetPrefix = "magnet:?xt=urn:btih:"
+
     private var sessionHeader = ""
     private var currentDownloadDir = ""
 
@@ -84,8 +86,6 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
     private fun clearEditMagnet() {
         editMagnet.text.clear()
     }
-
-    private val magnetPrefix = "magnet:?xt=urn:btih:"
 
     private fun normalizeMagnet(_magnet: String) : String {
         val magnet = _magnet.trim()
@@ -242,9 +242,8 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
                     val newRequest = builder.build()
                     chain.proceed(newRequest)
                 }.build()
-            val url = "http://${toServer.address}:${toServer.port}/transmission/rpc"
-            Log.info(url)
-            val request = Request.Builder().url(url).build()
+            Log.info(toServer.url)
+            val request = Request.Builder().url(toServer.url).build()
             val response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 Log.info("Response code: ${response.code()}")
