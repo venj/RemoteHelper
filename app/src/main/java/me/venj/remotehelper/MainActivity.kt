@@ -15,6 +15,7 @@ import okhttp3.*
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.doAsync
 import org.json.JSONObject
+import java.util.*
 import java.util.logging.Logger
 
 fun AppCompatActivity.sharedPreferences() : SharedPreferences {
@@ -132,13 +133,46 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
     // KittenInputDialogListener
 
     override fun onDialogPositiveClick(dialog: DialogFragment, message: String) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         Log.info("OK clicked in main activity: $message")
+        // For test
+        listTorrents()
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         Log.info("Cancel clicked in main activity.")
+    }
+
+    // List torrents
+    private fun listTorrents(onSuccess: ((JSONObject) -> Unit)? = null, onFailure: (() -> Unit)? = null) {
+        doAsync {
+            // TODO("Read API server configuration from user settings.")
+            val apiServer = APIServer()
+            val client: OkHttpClient =
+                OkHttpClient().newBuilder().addInterceptor { chain ->
+                    val originalRequest = chain.request()
+                    val builder = originalRequest.newBuilder()
+                    builder.header("User-Agent", apiServer.userAgent)
+                    builder.get()
+                    val newRequest = builder.build()
+                    chain.proceed(newRequest)
+                }.build()
+            val url = "${apiServer.scheme}://${apiServer.address}:${apiServer.port}/torrents?stats=true"
+            Log.info(url)
+            val request = Request.Builder().url(url).build()
+            val response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                Log.info("Response code: ${response.code()}")
+                val responseString = response.body()?.string() ?: "{}"
+                val obj = JSONObject(responseString)
+                Log.info("JSON: ${obj}")
+                onSuccess?.invoke(obj)
+            }
+            else {
+                val code = response.code()
+                Log.warning("Error fetch torrent list: $code")
+                onFailure?.invoke()
+            }
+        }
     }
 
     // Show Settings Page.
