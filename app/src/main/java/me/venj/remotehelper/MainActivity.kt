@@ -3,8 +3,9 @@ package me.venj.remotehelper
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
+import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
@@ -28,16 +29,15 @@ fun AppCompatActivity.hideKeyboard() {
 
 val Log = Logger.getLogger(MainActivity::class.java.name)
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputDialogListener {
 
-    lateinit var transmissionAddress: String
-    lateinit var transmissionPort: String
-    lateinit var transmissionUsername: String
-    lateinit var transmissionPassword: String
+    private lateinit var transmissionAddress: String
+    private lateinit var transmissionPort: String
+    private lateinit var transmissionUsername: String
+    private lateinit var transmissionPassword: String
 
-    val Log = Logger.getLogger(javaClass.name)
-    var sessionHeader = ""
-    var currentDownloadDir = ""
+    private var sessionHeader = ""
+    private var currentDownloadDir = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,6 +108,10 @@ class MainActivity : AppCompatActivity() {
             showSettings()
             return true
         }
+        else if (item?.itemId == R.id.menuKitten) {
+            showSearchPrompt()
+            return true
+        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -118,6 +122,23 @@ class MainActivity : AppCompatActivity() {
         transmissionPort = pref.getString("transmission_port", "9091") ?: ""
         transmissionUsername = pref.getString("transmission_username", "") ?: ""
         transmissionPassword = pref.getString("transmission_password", "") ?: ""
+    }
+
+    private fun showSearchPrompt() {
+        val dialog = KittenInputDialogFragment()
+        dialog.show(supportFragmentManager, "KittenDialog")
+    }
+
+    // KittenInputDialogListener
+
+    override fun onDialogPositiveClick(dialog: DialogFragment, message: String) {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.info("OK clicked in main activity: $message")
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.info("Cancel clicked in main activity.")
     }
 
     // Show Settings Page.
@@ -205,11 +226,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-}
-
-class TransmissionServer constructor(_address: String = "localhost", _port: String = "9091", _username: String = "", _password: String = "") {
-    var address = _address
-    var port = _port
-    var username = _username
-    var password = _password
 }
