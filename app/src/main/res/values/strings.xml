@@ -15,4 +15,5 @@
     <string name="dialog_cancel_button">Cancel</string>
     <string name="cancel_button">Cancel</string>
     <string name="torrents_title">Torrents</string>
+    <string name="menu_torrents">Torrents</string>
 </resources>

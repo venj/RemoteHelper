@@ -110,6 +110,10 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
             showSettings()
             return true
         }
+        else if (item?.itemId == R.id.menuTorrents) {
+            loadTorrentsList()
+            return true
+        }
         else if (item?.itemId == R.id.menuKitten) {
             showSearchPrompt()
             return true
@@ -131,11 +135,7 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
         dialog.show(supportFragmentManager, "KittenDialog")
     }
 
-    // KittenInputDialogListener
-
-    override fun onDialogPositiveClick(dialog: DialogFragment, message: String) {
-        Log.info("OK clicked in main activity: $message")
-        // For test
+    private fun loadTorrentsList() {
         listTorrents({ torrents ->
             val list = (torrents["items"] as JSONArray).toList() as List<String>
             val counts = (torrents["count"] as JSONArray).toList() as List<Int>
@@ -154,7 +154,12 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
             }
         })
+    }
 
+    // KittenInputDialogListener
+
+    override fun onDialogPositiveClick(dialog: DialogFragment, message: String) {
+        Log.info("OK clicked in main activity: $message")
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
