@@ -11,6 +11,7 @@ class TorrentsListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_torrents_list)
+        actionBar?.setHomeButtonEnabled(true)
 
         setTitle(R.string.torrents_title)
 
@@ -21,5 +22,10 @@ class TorrentsListActivity : AppCompatActivity() {
 
         val adaptor = TorrentsListAdaptor(torrentsList)
         recyclerView.adapter = adaptor
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }
