@@ -14,8 +14,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.doAsync
+import org.json.JSONArray
 import org.json.JSONObject
-import java.util.*
+import java.io.Serializable
 import java.util.logging.Logger
 
 fun AppCompatActivity.sharedPreferences() : SharedPreferences {
@@ -135,7 +136,25 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
     override fun onDialogPositiveClick(dialog: DialogFragment, message: String) {
         Log.info("OK clicked in main activity: $message")
         // For test
-        listTorrents()
+        listTorrents({ torrents ->
+            val list = (torrents["items"] as JSONArray).toList() as List<String>
+            val counts = (torrents["count"] as JSONArray).toList() as List<Int>
+
+            val torrentsList = list.mapIndexed { i, o ->
+                TorrentsListItem(o, counts[i])
+            }
+            Log.info("$torrentsList")
+            runOnUiThread {
+                showTorrentsList(torrentsList)
+            }
+        }, {
+            val message = "Error loading torrents list."
+            Log.warning(message)
+            runOnUiThread {
+                Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+            }
+        })
+
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
@@ -173,6 +192,13 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
                 onFailure?.invoke()
             }
         }
+    }
+
+    // Show Settings Page.
+    private fun showTorrentsList(list: List<TorrentsListItem>) {
+        val torrentsListIntent = Intent(this, TorrentsListActivity::class.java)
+        torrentsListIntent.putExtra("list", (list as Serializable))
+        startActivity(torrentsListIntent)
     }
 
     // Show Settings Page.
@@ -261,3 +287,5 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
         }
     }
 }
+
+fun JSONArray.toList(): List<Any> = MutableList(length(), this::get)
