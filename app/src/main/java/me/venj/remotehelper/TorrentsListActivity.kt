@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.widget.LinearLayout
 
 class TorrentsListActivity : AppCompatActivity() {
@@ -17,6 +18,15 @@ class TorrentsListActivity : AppCompatActivity() {
 
         val recyclerView = findViewById<RecyclerView>(R.id.torrentsListTableView)
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+        recyclerView.addOnItemTouchListener(RecyclerItemOnClickListener(applicationContext, recyclerView, object: RecyclerItemOnClickListener.OnItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                Log.info("Item clicked at $position!")
+            }
+
+            override fun onItemLongClick(view: View, position: Int) {
+                Log.info("Item long clicked at $position!")
+            }
+        }))
 
         val torrentsList = intent.getSerializableExtra("list") as List<TorrentsListItem>
 

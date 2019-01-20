@@ -6,6 +6,9 @@
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:id="@+id/torrentsListCell">
 
     <TextView
@@ -13,14 +16,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginTop="4sp"
+            android:layout_marginBottom="4sp"
+            android:layout_marginLeft="18sp"
+            android:layout_marginRight="18sp"
             android:textSize="18sp"/>
 
-    <Button
-            android:id="@+id/index_selection_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:textSize="18sp"
-            style="@style/Widget.AppCompat.Button.Small"/>
 </LinearLayout>

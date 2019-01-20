@@ -5,4 +5,8 @@ class TransmissionServer constructor(_address: String = "localhost", _port: Stri
     var port = _port
     var username = _username
     var password = _password
+    val url: String
+        get() {
+            return "http://${this.address}:${this.port}/transmission/rpc"
+        }
 }

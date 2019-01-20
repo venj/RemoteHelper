@@ -17,6 +17,8 @@ import org.jetbrains.anko.doAsync
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.Serializable
+import java.lang.Exception
+import java.net.ConnectException
 import java.util.logging.Logger
 
 fun AppCompatActivity.sharedPreferences() : SharedPreferences {
@@ -29,7 +31,7 @@ fun AppCompatActivity.hideKeyboard() {
     imm.hideSoftInputFromWindow(contentView?.windowToken, 0)
 }
 
-val Log = Logger.getLogger(MainActivity::class.java.name)
+val Log: Logger = Logger.getLogger(MainActivity::class.java.name)
 
 class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputDialogListener {
 
@@ -183,17 +185,27 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
             val url = "${apiServer.scheme}://${apiServer.address}:${apiServer.port}/torrents?stats=true"
             Log.info(url)
             val request = Request.Builder().url(url).build()
-            val response = client.newCall(request).execute()
-            if (response.isSuccessful) {
-                Log.info("Response code: ${response.code()}")
-                val responseString = response.body()?.string() ?: "{}"
-                val obj = JSONObject(responseString)
-                Log.info("JSON: ${obj}")
-                onSuccess?.invoke(obj)
+            try {
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    Log.info("Response code: ${response.code()}")
+                    val responseString = response.body()?.string() ?: "{}"
+                    val obj = JSONObject(responseString)
+                    Log.info("JSON: ${obj}")
+                    onSuccess?.invoke(obj)
+                }
+                else {
+                    val code = response.code()
+                    Log.warning("Error fetch torrent list: $code")
+                    onFailure?.invoke()
+                }
             }
-            else {
-                val code = response.code()
-                Log.warning("Error fetch torrent list: $code")
+            catch (e: ConnectException) {
+                Log.warning("Failed to connect to server: $apiServer.")
+                onFailure?.invoke()
+            }
+            catch (e: Exception) {
+                Log.warning("Unknown error fetching torrent list: ${e.stackTrace}.")
                 onFailure?.invoke()
             }
         }
