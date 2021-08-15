@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item?.itemId == R.id.menuSettings) {
             showSettings()
             return true
@@ -247,7 +247,7 @@ class MainActivity : AppCompatActivity(), KittenInputDialogFragment.KittenInputD
                     val params =
                         if (downloadDir == "") hashMapOf(Pair("method", "session-get"))
                         else hashMapOf(Pair("method", "torrent-add"), Pair("arguments", hashMapOf(Pair("download-dir", currentDownloadDir), Pair("paused", false), Pair("filename", magnet))))
-                    val json = JSONObject(params).toString()
+                    val json = JSONObject(params as Map<*, *>).toString()
                     Log.info("Transmission request: $json")
                     val body = RequestBody.create(MediaType.get("application/json"), json)
                     builder.post(body)
